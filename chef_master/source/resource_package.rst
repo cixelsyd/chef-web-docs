@@ -32,6 +32,7 @@ For more information about specific resources for specific platforms, see the fo
 * :doc:`solaris_package </resource_solaris_package>`
 * :doc:`windows_package </resource_windows_package>`
 * :doc:`yum_package </resource_yum>`
+* :doc:`zypper_package </resource_zypper_package>`
 
 Syntax
 =====================================================
@@ -434,6 +435,14 @@ For example, installing multiple packages:
 .. code-block:: ruby
 
    package ['package1', 'package2']
+
+Installing multiple packages with versions:
+
+.. code-block:: ruby
+
+   package ['package1', 'package2'] do
+     version [ '1.3.4-2', '4.3.6-1']
+   end
 
 Upgrading multiple packages:
 

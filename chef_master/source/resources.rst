@@ -1275,6 +1275,7 @@ The following resources are built-in to the chef-client:
 * windows_service
 * yum (based on the package resource)
 * yum_repository
+* zypper (based on the package resource)
 
 See below for more information about each of these resources, their related actions and properties, and examples of how these resources can be used in recipes.
 
@@ -1407,3 +1408,5 @@ See below for more information about each of these resources, their related acti
 .. include:: resource_yum.rst
 
 .. include:: resource_yum_repository.rst
+
+.. include:: resource_zypper_package.rst

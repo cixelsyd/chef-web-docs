@@ -542,4 +542,11 @@ The following resources are platform resources (i.e. "are available from the che
 
        .. end_tag
 
+   * - :doc:`zypper_package </resource_zypper_package>`
+     - .. tag resource_package_zypper
+
+       Use the **zypper_package** resource to install, upgrade, and remove packages with Zypper for the SUSE Enterprise and OpenSUSE platforms.
+
+       .. end_tag
+
 In addition, the :doc:`chef_handler </resource_chef_handler>` resource is configured and run using the **chef_handler** cookbook, which is the location in which custom handlers are defined and maintained. Despite being defined in a cookbook (and as a "lightweight resource"), the **chef_handler** resource should otherwise be considered a "platform resource".

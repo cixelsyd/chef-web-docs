@@ -1,15 +1,13 @@
 =====================================================
-yum_package
+zypper_package
 =====================================================
-`[edit on GitHub] <https://github.com/chef/chef-web-docs/blob/master/chef_master/source/resource_yum.rst>`__
+`[edit on GitHub] <https://github.com/chef/chef-web-docs/blob/master/chef_master/source/resource_zypper_package.rst>`__
 
-.. tag resource_package_yum
+.. tag resource_package_zypper
 
-Use the **yum_package** resource to install, upgrade, and remove packages with Yum for the Red Hat and CentOS platforms. The **yum_package** resource is able to resolve ``provides`` data for packages much like Yum can do when it is run from the command line. This allows a variety of options for installing packages, like minimum versions, virtual provides, and library names.
+Use the **zypper_package** resource to install, upgrade, and remove packages with Zypper for the SUSE Enterprise and OpenSUSE platforms.
 
 .. end_tag
-
-.. note:: Support for using file names to install packages (as in ``yum_package "/bin/sh"``) is not available because the volume of data required to parse for this is excessive.
 
 .. note:: .. tag notes_resource_based_on_package
 
@@ -19,26 +17,24 @@ Use the **yum_package** resource to install, upgrade, and remove packages with Y
 
 Syntax
 =====================================================
-A **yum_package** resource block manages a package on a node, typically by installing it. The simplest use of the **yum_package** resource is:
+A **zypper_package** resource block manages a package on a node, typically by installing it. The simplest use of the **zypper_package** resource is:
 
 .. code-block:: ruby
 
-   yum_package 'package_name'
+   zypper_package 'package_name'
 
 which will install the named package using all of the default options and the default action (``:install``).
 
-The full syntax for all of the properties that are available to the **yum_package** resource is:
+The full syntax for all of the properties that are available to the **zypper_package** resource is:
 
 .. code-block:: ruby
 
-   yum_package 'name' do
-     allow_downgrade            TrueClass, FalseClass
-     arch                       String, Array
-     flush_cache                Array
+   zypper_package 'name' do
+     gpg_check                  TrueClass, FalseClass
      notifies                   # see description
      options                    String
      package_name               String, Array # defaults to 'name' if not specified
-     provider                   Chef::Provider::Package::Yum
+     provider                   Chef::Provider::Package::zypper
      source                     String
      subscribes                 # see description
      timeout                    String, Integer
@@ -48,10 +44,10 @@ The full syntax for all of the properties that are available to the **yum_packag
 
 where
 
-* ``yum_package`` tells the chef-client to manage a package
+* ``zypper_package`` tells the chef-client to manage a package
 * ``'name'`` is the name of the package
 * ``action`` identifies which steps the chef-client will take to bring the node into the desired state
-* ``allow_downgrade``, ``arch``, ``flush_cache``, ``options``, ``package_name``, ``provider``, ``source``, ``timeout``, and ``version`` are properties of this resource, with the Ruby type shown. See "Properties" section below for more information about all of the properties that may be used with this resource.
+* ``gpg_check``, ``options``, ``package_name``, ``provider``, ``source``, ``timeout``, and ``version`` are properties of this resource, with the Ruby type shown. See "Properties" section below for more information about all of the properties that may be used with this resource.
 
 Changed in Chef Client 12.1 to support specifying multiple packages and/or versions.
 
@@ -63,7 +59,7 @@ This resource has the following actions:
    Default. Install a package. If a version is specified, install the specified version of the package.
 
 ``:lock``
-   Locks the yum package to a specific version.
+   Locks the zypper package to a specific version.
 
    New in Chef Client 12.16.
 
@@ -77,63 +73,28 @@ This resource has the following actions:
 ``:purge``
    Purge a package. This action typically removes the configuration files as well as the package.
 
+``:reconfig``
+   Reconfigure a package. This action requires a response file.
+
 ``:remove``
    Remove a package.
 
 ``:unlock``
-   Unlocks the yum package so that it can be upgraded to a newer version.
+   Unlocks the zypper package so that it can be upgraded to a newer version.
 
    New in Chef Client 12.16.
 
 ``:upgrade``
-   Install a package and/or ensure that a package is the latest version. This action will ignore the ``version`` attribute.
+   Install a package and/or ensure that a package is the latest version.
 
 Properties
 =====================================================
 This resource has the following properties:
 
-``allow_downgrade``
+``gpg_check``
    **Ruby Types:** TrueClass, FalseClass
 
-   Downgrade a package to satisfy requested version requirements.
-
-``arch``
-   **Ruby Types:** String
-
-   The architecture of the package to be installed or upgraded. This value can also be passed as part of the package name.
-
-``flush_cache``
-   **Ruby Type:** Array
-
-   Flush the in-memory cache before or after a Yum operation that installs, upgrades, or removes a package. Default value: ``[ :before, :after ]``. The value may also be a Hash: ``( { :before => true/false, :after => true/false } )``.
-
-   .. tag resources_common_package_yum_cache
-
-   Yum automatically synchronizes remote metadata to a local cache. The chef-client creates a copy of the local cache, and then stores it in-memory during the chef-client run. The in-memory cache allows packages to be installed during the chef-client run without the need to continue synchronizing the remote metadata to the local cache while the chef-client run is in-progress.
-
-   .. end_tag
-
-   As an array:
-
-   .. code-block:: ruby
-
-      yum_package 'some-package' do
-        #...
-        flush_cache [ :before ]
-        #...
-      end
-
-   and as a Hash:
-
-   .. code-block:: ruby
-
-      yum_package 'some-package' do
-        #...
-        flush_cache( { :after => true } )
-        #...
-      end
-
-   .. note:: The ``flush_cache`` property does not flush the local Yum cache! Use Yum tools---``yum clean headers``, ``yum clean packages``, ``yum clean all``---to clean the local Yum cache.
+   Verify the package's GPG signature. Default value: ``true``. Can also be controlled site-wide using the ``zypper_check_gpg`` config option.
 
 ``ignore_failure``
    **Ruby Types:** TrueClass, FalseClass
@@ -177,12 +138,12 @@ This resource has the following properties:
 ``options``
    **Ruby Type:** String
 
-   One (or more) additional options that are passed to the command.
+   One (or more) additional command options that are passed to the command. For example, common zypper directives, such as ``--no-recommends``. See the `zypper man page <https://en.opensuse.org/SDB:Zypper_manual_(plain)>`_ for the full list.
 
 ``package_name``
    **Ruby Types:** String, Array
 
-   One of the following: the name of a package, the name of a package and its architecture, the name of a dependency. Default value: the ``name`` of the resource block See "Syntax" section above for more information.
+   The name of the package. Default value: the ``name`` of the resource block See "Syntax" section above for more information.
 
 ``provider``
    **Ruby Type:** Chef Class
@@ -202,7 +163,7 @@ This resource has the following properties:
 ``source``
    **Ruby Type:** String
 
-   Optional. The path to a package in the local file system.
+   Optional. The direct path to a dpkg or deb package.
 
 ``subscribes``
    **Ruby Type:** Symbol, 'Chef::Resource[String]'
@@ -246,7 +207,7 @@ This resource has the following properties:
 ``version``
    **Ruby Types:** String, Array
 
-   The version of a package to be installed or upgraded. This attribute is ignored when using the ``:upgrade`` action.
+   The version of a package to be installed or upgraded.
 
 Multiple Packages
 -----------------------------------------------------
@@ -335,142 +296,56 @@ This resource has the following providers:
 ``Chef::Provider::Package``, ``package``
    When this short name is used, the chef-client will attempt to determine the correct provider during the chef-client run.
 
-``Chef::Provider::Package::Yum``, ``yum_package``
-   The provider for the Yum package provider.
+``Chef::Provider::Package::Zypper``, ``zypper_package``
+   The provider for the SUSE Enterprise and OpenSUSE platforms.
 
 Examples
 =====================================================
+.. tag resources_common_examples_intro
+
 The following examples demonstrate various approaches for using resources in recipes. If you want to see examples of how Chef uses resources in recipes, take a closer look at the cookbooks that Chef authors and maintains: https://github.com/chef-cookbooks.
 
-**Install an exact version**
-
-.. tag resource_yum_package_install_exact_version
-
-.. To install an exact version:
-
-.. code-block:: ruby
-
-   yum_package 'netpbm = 10.35.58-8.el5'
-
 .. end_tag
 
-**Install a minimum version**
+**Install a package using package manager**
 
-.. tag resource_yum_package_install_minimum_version
+.. tag resource_zypper_package_install_package
 
-.. To install a minimum version:
-
-.. code-block:: ruby
-
-   yum_package 'netpbm >= 10.35.58-8.el5'
-
-.. end_tag
-
-**Install a minimum version using the default action**
-
-.. tag resource_yum_package_install_package_using_default_action
-
-.. To install the same package using the default action:
+.. To install a package using package manager:
 
 .. code-block:: ruby
 
-   yum_package 'netpbm'
-
-.. end_tag
-
-**To install a package**
-
-.. tag resource_yum_package_install_package
-
-.. To install a package:
-
-.. code-block:: ruby
-
-   yum_package 'netpbm' do
+   zypper_package 'name of package' do
      action :install
    end
 
 .. end_tag
 
-**To install a partial minimum version**
+**Install a package using local file**
 
-.. tag resource_yum_package_install_partial_minimum_version
+.. tag resource_zypper_package_install_package_using_local_file
 
-.. To install a partial minimum version:
-
-.. code-block:: ruby
-
-   yum_package 'netpbm >= 10'
-
-.. end_tag
-
-**To install a specific architecture**
-
-.. tag resource_yum_package_install_specific_architecture
-
-.. To install a specific architecture:
+.. To install a package using local file:
 
 .. code-block:: ruby
 
-   yum_package 'netpbm' do
-     arch 'i386'
-   end
-
-or:
-
-.. code-block:: ruby
-
-   yum_package 'netpbm.x86_64'
-
-.. end_tag
-
-**To install a specific version-release**
-
-.. tag resource_yum_package_install_specific_version_release
-
-.. To install a specific version-release:
-
-.. code-block:: ruby
-
-   yum_package 'netpbm' do
-     version '10.35.58-8.el5'
-   end
-
-.. end_tag
-
-**To install a specific version (even when older than the current)**
-
-.. tag resource_yum_package_install_specific_version
-
-.. To install a specific version (even if it is older than the version currently installed):
-
-.. code-block:: ruby
-
-   yum_package 'tzdata' do
-     version '2011b-1.el5'
-     allow_downgrade true
-   end
-
-.. end_tag
-
-**Handle cookbook_file and yum_package resources in the same recipe**
-
-.. tag resource_yum_package_handle_cookbook_file_and_yum_package
-
-.. To handle cookbook_file and yum_package when both called in the same recipe
-
-When a **cookbook_file** resource and a **yum_package** resource are both called from within the same recipe, use the ``flush_cache`` attribute to dump the in-memory Yum cache, and then use the repository immediately to ensure that the correct package is installed:
-
-.. code-block:: ruby
-
-   cookbook_file '/etc/yum.repos.d/custom.repo' do
-     source 'custom'
-     mode '0755'
-   end
-
-   yum_package 'only-in-custom-repo' do
+   zypper_package 'jwhois' do
      action :install
-     flush_cache [ :before ]
+     source '/path/to/jwhois.rpm'
+   end
+
+.. end_tag
+
+**Install without using recommend packages as a dependency**
+
+.. tag resource_zypper_package_install_without_recommends_suggests
+
+.. To install without using recommend packages as a dependency:
+
+.. code-block:: ruby
+
+   package 'apache2' do
+     options '--no-recommends'
    end
 
 .. end_tag
