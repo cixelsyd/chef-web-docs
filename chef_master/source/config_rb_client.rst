@@ -28,6 +28,9 @@ This configuration file has the following settings:
 
    Changed in Chef Client 12.4 to "stable", changed in 12.1 to run chef-client in audit_mode.
 
+``automatic_attribute_blacklist``
+   A Hash that blacklists ``automatic`` attributes, preventing blacklisted attributes from being saved.
+
 ``automatic_attribute_whitelist``
    A Hash that whitelists ``automatic`` attributes, preventing non-whitelisted attributes from being saved.
 
@@ -99,6 +102,9 @@ This configuration file has the following settings:
 
 ``data_collector.raise_on_failure``
    When enabled the chef-client will raise an error if it is unable to successfully POST to the data collector server. Default value: ``false``.
+
+``default_attribute_blacklist``
+   A Hash that blacklists ``default`` attributes, preventing blacklisted attributes from being saved.
 
 ``default_attribute_whitelist``
    A Hash that whitelists ``default`` attributes, preventing non-whitelisted attributes from being saved.
@@ -250,6 +256,12 @@ This configuration file has the following settings:
 
 ``node_path``
    The location in which nodes are stored when the chef-client is run in local mode. Default value: ``/var/chef/node``.
+
+``normal_attribute_blacklist``
+   A Hash that blacklists ``normal`` attributes, preventing blacklisted attributes from being saved.
+
+``override_attribute_blacklist``
+   A Hash that blacklists ``override`` attributes, preventing blacklisted attributes from being saved.
 
 ``normal_attribute_whitelist``
    A Hash that whitelists ``normal`` attributes, preventing non-whitelisted attributes from being saved.

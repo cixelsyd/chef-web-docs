@@ -126,6 +126,70 @@ Attribute precedence, when viewed as a table:
 
 Changed in Chef Client 12.0, so that attributes may be modified for named precedence levels, all precedence levels, and be fully assigned.
 
+Blacklist Attributes
+-----------------------------------------------------
+.. tag node_attribute_blacklist
+
+.. warning:: When these settings are used, any attribute defined in a blacklist will not be saved. Each attribute type is blacklisted independently of the other attribute types. For example, if ``automatic_attribute_blacklist`` defines attributes to be filtered out, but ``normal_attribute_blacklist``, ``default_attribute_blacklist``, and ``override_attribute_blacklist`` are not defined, then all normal, default and override attributes are saved, along with the filtered automatic attributes.
+
+Attributes that should be saved by a node may be blacklisted in the client.rb file. The blacklist is a Hash of keys that specify each attribute to be filtered out.
+
+Attributes are blacklisted by attribute type, with each attribute type being blacklisted independently. Each attribute type---``automatic``, ``default``, ``normal``, and ``override``---may define blacklists by using the following settings in the client.rb file:
+
+.. list-table::
+   :widths: 200 300
+   :header-rows: 1
+
+   * - Setting
+     - Description
+   * - ``automatic_attribute_blacklist``
+     - A Hash that blacklists ``automatic`` attributes, preventing blacklisted attributes from being saved. For example: ``['network/interfaces/eth0']``. Default value: all attributes are saved. If the Array is empty, all attributes are saved.
+   * - ``default_attribute_blacklist``
+     - A Hash that blacklists ``default`` attributes, preventing blacklisted attributes from being saved. For example: ``['filesystem/dev/disk0s2/size']``. Default value: all attributes are saved. If the Array is empty, all attributes are saved.
+   * - ``normal_attribute_blacklist``
+     - A Hash that blacklists ``normal`` attributes, preventing blacklisted attributes from being saved. For example: ``['filesystem/dev/disk0s2/size']``. Default value: all attributes are saved. If the Array is empty, all attributes are saved.
+   * - ``override_attribute_blacklist``
+     - A Hash that blacklists ``override`` attributes, preventing blacklisted attributes from being saved. For example: ``['map - autohome/size']``. Default value: all attributes are saved. If the Array is empty, all attributes are saved.
+
+.. warning:: It is recommended that only ``automatic_attribute_blacklist`` be used to blacklist attributes. This is primarily because automatic attributes generate the most data, but also that normal, default, and override attributes are typically much more important attributes and are more likely to cause issues if they are blacklisted incorrectly.
+
+For example, normal attribute data similar to:
+
+.. code-block:: javascript
+
+   {
+     "filesystem" => {
+       "/dev/disk0s2" => {
+         "size" => "10mb"
+       },
+       "map - autohome" => {
+         "size" => "10mb"
+       }
+     },
+     "network" => {
+       "interfaces" => {
+         "eth0" => {...},
+         "eth1" => {...},
+       }
+     }
+   }
+
+To blacklist the ``filesystem`` attributes and allow the other attributes to be saved, update the client.rb file:
+
+.. code-block:: ruby
+
+   normal_attribute_blacklist ['filesystem']
+
+When a blacklist is defined, any attribute of that type that is not specified in that attribute blacklist **will** be saved. So based on the previous blacklist for normal attributes, the ``filesystem`` and ``map - autohome`` attributes will not be saved, but the ``network`` attributes will.
+
+For attributes that contain slashes (``/``) within the attribute value, such as the ``filesystem`` attribute ``'/dev/diskos2'``, use an array. For example:
+
+.. code-block:: ruby
+
+   automatic_attribute_blacklist [['filesystem','/dev/diskos2']]
+
+.. end_tag
+
 Whitelist Attributes
 +++++++++++++++++++++++++++++++++++++++++++++++++++++
 .. tag node_attribute_whitelist
