@@ -1178,6 +1178,9 @@ This resource has the following actions:
 ``:enable``
    Create a launchd property list, and then ensure that it is enabled. If a launchd property list already exists, but does not match, updates the property list to match, and then restarts the daemon or agent.
 
+``:restart``
+   Restart a launchd managed daemon or agent.
+
 .. end_tag
 
 Properties
