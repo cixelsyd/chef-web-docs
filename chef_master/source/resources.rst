@@ -1228,7 +1228,6 @@ The following resources are built-in to the chef-client:
 * dpkg_package (based on the package resource)
 * dsc_resource
 * dsc_script
-* easy_install_package (based on the package resource)
 * env
 * erl_call
 * execute
@@ -1314,8 +1313,6 @@ See below for more information about each of these resources, their related acti
 .. include:: resource_dsc_resource.rst
 
 .. include:: resource_dsc_script.rst
-
-.. include:: resource_easy_install_package.rst
 
 .. include:: resource_env.rst
 

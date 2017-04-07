@@ -18,7 +18,6 @@ For more information about specific resources for specific platforms, see the fo
 * :doc:`chef_gem </resource_chef_gem>`
 * :doc:`chocolatey_package </resource_chocolatey_package>`
 * :doc:`dpkg_package </resource_dpkg_package>`
-* :doc:`easy_install_package </resource_easy_install_package>`
 * :doc:`freebsd_package </resource_freebsd_package>`
 * :doc:`gem_package </resource_gem_package>`
 * :doc:`homebrew_package </resource_homebrew_package>`
@@ -517,9 +516,6 @@ This resource has the following providers:
 
 ``Chef::Provider::Package::Dpkg``, ``dpkg_package``
    The provider for the dpkg platform. Can be used with the ``options`` attribute.
-
-``Chef::Provider::Package::EasyInstall``, ``easy_install_package``
-   The provider for Python.
 
 ``Chef::Provider::Package::Freebsd``, ``freebsd_package``
    The provider for the FreeBSD platform.

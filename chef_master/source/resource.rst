@@ -225,13 +225,6 @@ The following resources are platform resources (i.e. "are available from the che
 
        .. end_tag
 
-   * - :doc:`easy_install_package </resource_easy_install_package>`
-     - .. tag resource_package_easy_install
-
-       Use the **easy_install_package** resource to manage packages for the Python platform.
-
-       .. end_tag
-
    * - :doc:`env </resource_env>`
      - .. tag resource_env_summary
 
